@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kyonzen Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#171329;--panel:#211c3a;--line:#51466f;--text:#f5efff;--muted:#c6badc}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#382957,#171329 55%,#100e1d);color:var(--text);font-family:system-ui,sans-serif;padding:22px 14px}main{max-width:720px;margin:auto}.eyebrow{letter-spacing:.2em;text-transform:uppercase;color:#d9c7f1;font-size:.75rem}h1{font-family:Georgia,serif;font-weight:400;letter-spacing:.06em}p{color:var(--muted);line-height:1.55}.panel{background:#19152bee;border:1px solid var(--line);border-radius:20px;padding:20px;margin:18px 0}.field{display:block;margin:15px 0}.field span{display:block;font-size:.9rem;margin-bottom:7px}input,textarea{width:100%;padding:12px;border-radius:11px;border:1px solid #5b4e77;background:#100e1d;color:var(--text);font:inherit}textarea{min-height:100px}input[type=color]{height:48px;padding:4px}button{border:1px solid #a78acb;background:linear-gradient(135deg,#6d5792,#40335f);color:white;border-radius:12px;padding:12px 16px;font:inherit;font-weight:600;cursor:pointer;margin:5px 5px 5px 0}.secondary{background:#211c3a!important}.status{font-size:.9rem;padding:10px;border-radius:10px;background:#100e1d;color:#d9c7f1;overflow-wrap:anywhere}.hidden{display:none!important}.preview{padding:18px;border-radius:14px;border:1px solid #51466f;background:#171329;background-size:cover;background-position:center}.preview h2{font:2rem Georgia,serif}.small{font-size:.83rem}.warning{color:#e9d7a8}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+</style></head><body><main>
+<div class="top"><div><div class="eyebrow">Dreamy creative space</div><h1>Kyonzen Studio</h1><p>Panel admin untuk mengubah profil dan tampilan website.</p></div><span>☾ ✧</span></div>
+<section id="loginPanel" class="panel"><h2>Masuk ke panel</h2><p>Gunakan email dan password akun yang kamu buat di Supabase Authentication.</p>
+<label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" placeholder="Email kamu"></label>
+<label class="field"><span>Password</span><input id="password" type="password" autocomplete="current-password" placeholder="Password akun admin"></label>
+<button id="loginBtn">Login</button><div id="loginStatus" class="status">Belum login.</div></section>
+<section id="editorPanel" class="panel hidden"><div class="top"><h2>Pengaturan website</h2><button id="logoutBtn" class="secondary">Keluar</button></div>
+<p class="small">Perubahan disimpan ke database Supabase. Untuk gambar, masukkan URL gambar publik yang diawali https://.</p>
+<label class="field"><span>Nama profil</span><input id="display_name" maxlength="80"></label>
+<label class="field"><span>Tagline</span><input id="tagline" maxlength="120"></label>
+<label class="field"><span>Deskripsi</span><textarea id="description" maxlength="1000"></textarea></label>
+<label class="field"><span>Warna latar</span><input id="background_color" type="color" value="#171329"></label>
+<label class="field"><span>URL gambar latar (opsional)</span><input id="background_image" type="url" placeholder="https://..."></label>
+<label class="field"><span>URL foto profil (opsional)</span><input id="profile_image" type="url" placeholder="https://..."></label>
+<button id="saveBtn">Simpan perubahan</button><button id="reloadBtn" class="secondary">Muat ulang</button><div id="editStatus" class="status">Memuat pengaturan…</div>
+<div id="preview" class="preview"><div class="eyebrow">Preview</div><h2 id="previewName">Kyonzen</h2><strong id="previewTagline">DreaglitmeBoy</strong><p id="previewDescription">A quiet corner between dreams and reality.</p></div>
+<p class="small warning">Catatan: ini menyimpan pengaturan ke Supabase. Halaman utama index.html harus dihubungkan ke tabel site_settings agar perubahan terlihat di halaman publik.</p></section>
+<p class="small">Jangan pernah memasukkan Supabase secret/service_role key ke website publik.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+(()=>{
+const URL="https://qgridywpvglqthxoumpg.supabase.co";
+const KEY="sb_publishable_1YoorEVAP1tv8y6vd6kzTg_8o4M9GSY";
+const $=id=>document.getElementById(id), fields=["display_name","tagline","description","background_color","background_image","profile_image"];
+const say=(id,s)=>$(id).textContent=s;let db;
+function preview(){ $("previewName").textContent=$("display_name").value||"Kyonzen";$("previewTagline").textContent=$("tagline").value||"";$("previewDescription").textContent=$("description").value||"";const u=$("background_image").value.trim();$("preview").style.backgroundColor=$("background_color").value||"#171329";$("preview").style.backgroundImage=u?'linear-gradient(#17132955,#17132988),url("'+u.replace(/["\\\\]/g,"")+'")':"none";}
+fields.forEach(id=>$(id).addEventListener("input",preview));
+function validUrl(v){if(!v)return null;try{let u=new URL(v);return ["https:","http:"].includes(u.protocol)?u.href:null}catch{return null}}
+async function load(){say("editStatus","Memuat pengaturan…");let {data,error}=await db.from("site_settings").select("*").eq("id",1).single();if(error){say("editStatus","Gagal memuat: "+error.message);return}fields.forEach(id=>{if(data[id]!=null)$(id).value=data[id]});preview();say("editStatus","Pengaturan berhasil dimuat.")}
+async function authView(){let {data:{session}}=await db.auth.getSession();$("loginPanel").classList.toggle("hidden",!!session);$("editorPanel").classList.toggle("hidden",!session);if(session)await load()}
+$("loginBtn").onclick=async()=>{let email=$("email").value.trim(),password=$("password").value;if(!email||!password){say("loginStatus","Isi email dan password.");return}$("loginBtn").disabled=true;say("loginStatus","Sedang login…");let {error}=await db.auth.signInWithPassword({email,password});$("loginBtn").disabled=false;if(error){say("loginStatus","Login gagal: "+error.message);return}say("loginStatus","Login berhasil.");await authView()};
+$("logoutBtn").onclick=async()=>{await db.auth.signOut();$("editorPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");say("loginStatus","Kamu sudah keluar.")};
+$("reloadBtn").onclick=load;
+$("saveBtn").onclick=async()=>{let {data:{session}}=await db.auth.getSession();if(!session){say("editStatus","Sesi habis. Login lagi.");await authView();return}let p={display_name:$("display_name").value.trim(),tagline:$("tagline").value.trim(),description:$("description").value.trim(),background_color:$("background_color").value,background_image:validUrl($("background_image").value.trim()),profile_image:validUrl($("profile_image").value.trim()),updated_at:new Date().toISOString()};if(!p.display_name||!p.tagline||!p.description){say("editStatus","Nama, tagline, dan deskripsi wajib diisi.");return}if(($("background_image").value.trim()&&!p.background_image)||($("profile_image").value.trim()&&!p.profile_image)){say("editStatus","URL gambar tidak valid. Gunakan URL HTTP/HTTPS.");return}$("saveBtn").disabled=true;say("editStatus","Menyimpan…");let {error}=await db.from("site_settings").update(p).eq("id",1);$("saveBtn").disabled=false;if(error){say("editStatus","Gagal menyimpan: "+error.message+" Pastikan UID admin dan policy sudah benar.");return}say("editStatus","Berhasil disimpan ke Supabase!");preview()};
+if(!window.supabase){say("loginStatus","Library Supabase tidak termuat. Periksa internet.");return}db=window.supabase.createClient(URL,KEY);authView();
+})();
+</script></body></html>
