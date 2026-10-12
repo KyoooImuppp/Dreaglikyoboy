@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100e20">
+  <meta name="description" content="Kyonzen — DreaglitmeBoy. A little world of digital art, music, and dreams.">
+  <title>Kyonzen — DreaglitmeBoy</title>
+  <style>
+    :root {
+      --bg: #100e20;
+      --bg2: #17152b;
+      --panel: rgba(30, 27, 53, .72);
+      --line: rgba(221, 211, 255, .17);
+      --text: #f5f0ff;
+      --muted: #b9b0d3;
+      --lavender: #c9b7ff;
+      --blue: #a8c5f5;
+      --pink: #e7bde9;
+      --gold: #e9d7ad;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 86px; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 15% 0%, rgba(105, 84, 164, .20), transparent 38rem),
+        radial-gradient(ellipse at 90% 40%, rgba(77, 104, 160, .14), transparent 35rem),
+        var(--bg);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    .stars, .stars::before, .stars::after {
+      position: fixed; inset: 0; pointer-events: none; z-index: -1;
+      content: ""; background-repeat: repeat;
+    }
+    .stars {
+      opacity: .42;
+      background-image:
+        radial-gradient(1px 1px at 22px 34px, #fff 98%, transparent),
+        radial-gradient(1px 1px at 104px 82px, #d8d0ff 98%, transparent),
+        radial-gradient(2px 2px at 170px 145px, #fff 98%, transparent),
+        radial-gradient(1px 1px at 240px 45px, #b9d8ff 98%, transparent);
+      background-size: 290px 190px;
+      animation: drift 90s linear infinite;
+    }
+    .stars::before {
+      opacity: .55;
+      background-image: radial-gradient(1px 1px at 65px 125px, #fff 98%, transparent),
+        radial-gradient(2px 2px at 215px 180px, #e8cfff 98%, transparent);
+      background-size: 330px 260px;
+      animation: drift 120s linear infinite reverse;
+    }
+    @keyframes drift { to { transform: translateY(-80px); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes shimmer { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+
+    .wrap { width: min(1100px, calc(100% - 34px)); margin: auto; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(16, 14, 32, .82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      min-height: 68px; display: flex; align-items: center; justify-content: space-between;
+      gap: 18px;
+    }
+    .brand { font-size: 1.15rem; letter-spacing: .16em; text-transform: uppercase; }
+    .brand span { color: var(--lavender); }
+    .nav-links { display: flex; align-items: center; gap: 20px; font:  .83rem Arial, sans-serif; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .menu-btn {
+      display: none; border: 1px solid var(--line); background: var(--panel); color: var(--text);
+      border-radius: 12px; padding: 8px 11px;
+    }
+    .hero {
+      min-height: 80vh; display: grid; place-items: center; text-align: center;
+      padding: 84px 0 76px; position: relative;
+    }
+    .moon {
+      width: 104px; height: 104px; border-radius: 50%; margin: 0 auto 28px;
+      background: radial-gradient(circle at 32% 28%, #fffdf6, #e3d9ff 35%, #a4a9d9 68%, #7775a9);
+      box-shadow: 0 0 35px rgba(201,183,255,.36), 0 0 100px rgba(156,155,230,.18);
+      position: relative; animation: float 6s ease-in-out infinite;
+    }
+    .moon::after {
+      content: ""; position: absolute; width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(124, 124, 169, .18); top: 25px; left: 24px;
+      box-shadow: 24px 28px 0 -7px rgba(124,124,169,.17), 43px -4px 0 -11px rgba(124,124,169,.15);
+    }
+    .eyebrow {
+      color: var(--gold); letter-spacing: .24em; text-transform: uppercase;
+      font: .72rem Arial, sans-serif; margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(2.7rem, 10vw, 6.5rem); font-weight: 400; letter-spacing: .04em; line-height: 1.05; margin: 0; }
+    h1 .shine { background: linear-gradient(100deg, #fff, #d5c6ff 42%, #a9c9f8 78%, #f0d8ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .tagline { color: var(--pink); letter-spacing: .18em; font: .9rem Arial, sans-serif; margin: 20px 0 12px; }
+    .intro { color: var(--muted); max-width: 560px; margin: 0 auto 28px; }
+    .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 45px; padding: 11px 18px; border: 1px solid var(--line);
+      border-radius: 999px; background: rgba(201,183,255,.10); color: var(--text);
+      font: .86rem Arial, sans-serif; transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); border-color: rgba(201,183,255,.55); background: rgba(201,183,255,.16); }
+    .btn.primary { background: linear-gradient(110deg, rgba(177,154,232,.27), rgba(142,176,226,.20)); border-color: rgba(201,183,255,.4); }
+    .scroll-note { position: absolute; bottom: 24px; color: #9189ad; font: .7rem Arial, sans-serif; letter-spacing: .16em; }
+    section { padding: 76px 0; }
+    .section-head { max-width: 650px; margin-bottom: 28px; }
+    .kicker { color: var(--gold); font: .7rem Arial, sans-serif; letter-spacing: .2em; text-transform: uppercase; }
+    h2 { font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 400; line-height: 1.15; margin: 8px 0 12px; }
+    .section-head p, .muted { color: var(--muted); }
+    .about-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 22px; align-items: stretch; }
+    .panel {
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 26px; box-shadow: 0 20px 70px rgba(0,0,0,.12);
+    }
+    .sigil {
+      min-height: 250px; display: grid; place-items: center; text-align: center;
+      background: radial-gradient(circle at 50% 40%, rgba(183,163,235,.2), transparent 60%), var(--panel);
+    }
+    .sigil-mark { font-size: 4.5rem; color: var(--lavender); text-shadow: 0 0 32px rgba(201,183,255,.5); }
+    .sigil small { display: block; color: var(--muted); letter-spacing: .18em; font: .68rem Arial, sans-serif; }
+    .placeholder-note {
+      border-left: 2px solid rgba(201,183,255,.55); padding-left: 13px;
+      color: #a9a0c4; font-size: .9rem; margin-top: 18px;
+    }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+    .item-card {
+      overflow: hidden; border: 1px solid var(--line); border-radius: 19px;
+      background: rgba(28,25,49,.72); transition: transform .25s ease, border-color .25s ease;
+    }
+    .item-card:hover { transform: translateY(-4px); border-color: rgba(201,183,255,.42); }
+    .art-preview {
+      aspect-ratio: 4 / 3; display: grid; place-items: center; position: relative; overflow: hidden;
+      background: radial-gradient(circle at 50% 35%, rgba(237,218,255,.22), transparent 25%),
+        linear-gradient(145deg, #30284e, #191d38 55%, #443453);
+    }
+    .art-preview::before, .art-preview::after {
+      content: ""; position: absolute; border: 1px solid rgba(236,226,255,.3); border-radius: 50%;
+      width: 150px; height: 150px; transform: rotate(-28deg) scaleX(.65);
+    }
+    .art-preview::after { width: 110px; height: 110px; transform: rotate(32deg) scaleX(.72); }
+    .art-preview .symbol { font-size: 2.7rem; z-index: 1; color: #f0e6ff; text-shadow: 0 0 22px rgba(230,208,255,.65); }
+    .art-preview.blue { background: radial-gradient(circle at 65% 35%, rgba(191,222,255,.24), transparent 30%), linear-gradient(145deg, #233958, #171b34 62%, #3d3558); }
+    .art-preview.rose { background: radial-gradient(circle at 35% 40%, rgba(255,210,235,.23), transparent 30%), linear-gradient(145deg, #4b2c50, #211a37 62%, #493b62); }
+    .card-content { padding: 17px; }
+    .card-content h3 { margin: 0 0 5px; font-size: 1.15rem; font-weight: 400; }
+    .card-content p { margin: 0 0 15px; color: var(--muted); font-size: .88rem; }
+    .text-link { color: var(--lavender); font: .8rem Arial, sans-serif; }
+    .text-link:hover { text-decoration: underline; }
+    .music-card { padding: 19px; display: flex; align-items: center; gap: 15px; }
+    .music-icon {
+      flex: 0 0 58px; height: 58px; border-radius: 16px; display: grid; place-items: center;
+      background: linear-gradient(145deg, rgba(201,183,255,.24), rgba(168,197,245,.10));
+      border: 1px solid var(--line); font-size: 1.55rem;
+    }
+    .music-card h3 { margin: 0; font-weight: 400; }
+    .music-card p { color: var(--muted); font-size: .83rem; margin: 3px 0 8px; }
+    .support-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 17px; }
+    .support-card { padding: 24px; }
+    .support-card .emoji { font-size: 1.8rem; }
+    .support-card h3 { margin: 8px 0 5px; font-weight: 400; font-size: 1.3rem; }
+    .support-card p { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+    .disabled-link { opacity: .62; cursor: default; }
+    .quote { text-align: center; max-width: 720px; margin: 0 auto; color: #d7cdec; font-size: clamp(1.3rem, 4vw, 2rem); font-style: italic; }
+    .quote span { display: block; margin-top: 14px; color: var(--muted); font: .72rem Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 36px; color: #9b92b8; font: .78rem Arial, sans-serif; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back-top { color: var(--lavender); }
+    .tiny-star { color: var(--gold); animation: shimmer 3s ease-in-out infinite; }
+    @media (max-width: 760px) {
+      .nav { min-height: 62px; }
+      .menu-btn { display: inline-block; }
+      .nav-links {
+        display: none; position: absolute; top: 61px; left: 0; right: 0;
+        padding: 16px 22px 20px; background: rgba(16,14,32,.97);
+        border-bottom: 1px solid var(--line); flex-direction: column; align-items: flex-start; gap: 15px;
+      }
+      .nav-links.open { display: flex; }
+      .hero { min-height: 78vh; padding: 68px 0 82px; }
+      .moon { width: 84px; height: 84px; }
+      .about-grid, .cards { grid-template-columns: 1fr; }
+      .cards { gap: 15px; }
+      .art-preview { aspect-ratio: 16 / 8; }
+      .support-grid { grid-template-columns: 1fr; }
+      section { padding: 58px 0; }
+      .panel { padding: 22px; }
+      .scroll-note { bottom: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <!--
+    CARA MENGEDIT:
+    1. Ganti teks placeholder dengan informasi milikmu.
+    2. Ganti href="#" dengan URL asli, misalnya href="https://contoh.com".
+    3. Untuk produk baru, salin satu blok <article class="item-card">.
+    4. Simpan file dengan nama index.html.
+  -->
+
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#home" aria-label="Kembali ke beranda">KYON<span>ZEN</span></a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">☰ Menu</button>
+      <nav class="nav-links" id="navLinks" aria-label="Navigasi utama">
+        <a href="#about">About</a>
+        <a href="#art">Digital Art</a>
+        <a href="#music">Music</a>
+        <a href="#support">Community</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap" id="home">
+      <div>
+        <div class="moon" aria-hidden="true"></div>
+        <div class="eyebrow"><span class="tiny-star">✧</span> a little world of my own <span class="tiny-star">✧</span></div>
+        <h1><span class="shine">Kyonzen</span></h1>
+        <p class="tagline">DreaglitmeBoy</p>
+        <p class="intro">A quiet corner between dreams and reality — a home for my art, music, and little pieces of imagination.</p>
+        <div class="actions">
+          <a class="btn primary" href="#art">✧ Explore my art</a>
+          <a class="btn" href="#music">♫ Enter my music</a>
+        </div>
+      </div>
+      <div class="scroll-note">SCROLL TO WANDER &nbsp; ↓</div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">01 — The dreamer</div>
+          <h2>A little about me</h2>
+          <p>Every dream has a name, and every creation holds a small piece of its creator.</p>
+        </div>
+        <div class="about-grid">
+          <div class="panel sigil">
+            <div>
+              <div class="sigil-mark" aria-hidden="true">☾</div>
+              <small>KYONZEN · DREAGLITMEBOY</small>
+            </div>
+          </div>
+          <div class="panel">
+            <h3 style="font-weight:400;font-size:1.5rem;margin-top:0">Welcome to my dreamscape.</h3>
+            <p class="muted">Hi, I'm Kyonzen — an artist and music creator building a little world of my own. This space is where digital art, sound, and imagination meet.</p>
+            <p class="muted">I’m drawn to dreamy atmospheres, magical places, and stories that feel like memories from another life.</p>
+            <div class="placeholder-note">EDIT ME: Tambahkan bio singkatmu, cerita artistik, pronouns (jika ingin), atau hal yang ingin pengunjung ketahui.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="art">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">02 — Collected dreams</div>
+          <h2>Digital art gallery</h2>
+          <p>A small gallery of imagined worlds. Ganti kartu contoh ini dengan karya, harga, dan tautan toko milikmu.</p>
+        </div>
+        <div class="cards">
+          <article class="item-card">
+            <div class="art-preview"><span class="symbol" aria-hidden="true">✧</span></div>
+            <div class="card-content">
+              <h3>Moonlit Reverie</h3>
+              <p>Digital artwork · Ganti dengan deskripsi dan harga.</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan pembelian Moonlit Reverie belum ditambahkan.">View artwork ↗</a>
+            </div>
+          </article>
+          <article class="item-card">
+            <div class="art-preview blue"><span class="symbol" aria-hidden="true">☾</span></div>
+            <div class="card-content">
+              <h3>Blue Hour Palace</h3>
+              <p>Digital artwork · Ganti dengan deskripsi dan harga.</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan pembelian Blue Hour Palace belum ditambahkan.">View artwork ↗</a>
+            </div>
+          </article>
+          <article class="item-card">
+            <div class="art-preview rose"><span class="symbol" aria-hidden="true">❋</span></div>
+            <div class="card-content">
+              <h3>Dream Bloom</h3>
+              <p>Digital artwork · Ganti dengan deskripsi dan harga.</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan pembelian Dream Bloom belum ditambahkan.">View artwork ↗</a>
+            </div>
+          </article>
+        </div>
+        <p class="placeholder-note">BELUM PUNYA TOKO? Tidak apa-apa. Untuk sementara, kartu ini adalah contoh desain. Jangan lupa ganti judul, harga, gambar, dan tautannya sebelum promosi.</p>
+      </div>
+    </section>
+
+    <section id="music">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">03 — Sound in the stars</div>
+          <h2>Music I create</h2>
+          <p>Melodies for the nights that feel endless, and dreams we wish we could revisit.</p>
+        </div>
+        <div class="cards">
+          <article class="item-card music-card">
+            <div class="music-icon" aria-hidden="true">♫</div>
+            <div>
+              <h3>My first release</h3>
+              <p>Judul lagu · Platform musik</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan musik belum ditambahkan.">Listen to the song ↗</a>
+            </div>
+          </article>
+          <article class="item-card music-card">
+            <div class="music-icon" aria-hidden="true">♬</div>
+            <div>
+              <h3>Works in progress</h3>
+              <p>Demo, snippet, atau karya mendatang.</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan demo musik belum ditambahkan.">Discover more ↗</a>
+            </div>
+          </article>
+          <article class="item-card music-card">
+            <div class="music-icon" aria-hidden="true">✧</div>
+            <div>
+              <h3>My sound library</h3>
+              <p>Playlist atau semua rilisanmu.</p>
+              <a class="text-link placeholder-link" href="#" data-placeholder="Tautan playlist belum ditambahkan.">Enter the playlist ↗</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="support">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">04 — Find your way here</div>
+          <h2>Stay in my orbit</h2>
+          <p>Follow the journey, meet the community, or support the next dream.</p>
+        </div>
+        <div class="support-grid">
+          <article class="panel support-card">
+            <div class="emoji" aria-hidden="true">♡</div>
+            <h3>Support my work</h3>
+            <p>Kalau kamu ingin mendukung proses kreatifku, kamu bisa menambahkan tautan Saweria di sini.</p>
+            <a class="btn placeholder-link" href="#" data-placeholder="Tautan Saweria belum tersedia. Tambahkan URL Saweria milikmu nanti.">Support via Saweria ↗</a>
+          </article>
+          <article class="panel support-card">
+            <div class="emoji" aria-hidden="true">☄</div>
+            <h3>Join the community</h3>
+            <p>Tempat untuk berbagi karya, ngobrol tentang musik, dan berkumpul dengan sesama dreamers.</p>
+            <a class="btn placeholder-link" href="#" data-placeholder="Tautan komunitas belum tersedia. Tambahkan link Discord atau komunitasmu nanti.">Find the community ↗</a>
+          </article>
+          <article class="panel support-card">
+            <div class="emoji" aria-hidden="true">✦</div>
+            <h3>Follow my journey</h3>
+            <p>Tambahkan akun media sosial yang ingin kamu bagikan kepada pengunjung.</p>
+            <a class="btn placeholder-link" href="#" data-placeholder="Tautan media sosial belum ditambahkan.">Follow Kyonzen ↗</a>
+          </article>
+          <article class="panel support-card">
+            <div class="emoji" aria-hidden="true">✉</div>
+            <h3>Work with me</h3>
+            <p>Untuk pertanyaan, komisi, atau kolaborasi, tambahkan kontak publik yang memang ingin kamu bagikan.</p>
+            <a class="btn placeholder-link" href="#" data-placeholder="Tambahkan tautan kontak publik yang aman untuk dibagikan.">Contact / commission ↗</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <p class="quote">“Somewhere between the moonlight and a melody, a dream becomes real.”<span>— a note from Kyonzen</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div>© <span id="year"></span> Kyonzen · DreaglitmeBoy</div>
+      <div>Made beneath a <span style="color:var(--lavender)">quiet moon</span> ☾</div>
+      <a class="back-top" href="#home">Back to the stars ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    menuBtn.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+      menuBtn.textContent = isOpen ? "✕ Close" : "☰ Menu";
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.textContent = "☰ Menu";
+      });
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.querySelectorAll(".placeholder-link").forEach(link => {
+      link.addEventListener("click", event => {
+        if (link.getAttribute("href") === "#") {
+          event.preventDefault();
+          alert(link.dataset.placeholder || "Tautan ini belum ditambahkan.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
